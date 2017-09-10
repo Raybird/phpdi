@@ -11,6 +11,12 @@ class Main {
 
     private static $instance;
 
+    private static $diPath;
+
+    public static function init($diPath){
+        self::$diPath = $diPath;
+    }
+
     public static function getInstance(){
         if(self::$instance == null){
             self::$instance = new self();
@@ -23,7 +29,13 @@ class Main {
     }
 
     private function __construct(){
-        $builder = new ContainerBuilder();
-        $this->container = $builder->build();
+        $containerBuilder = new ContainerBuilder();
+
+        if(self::$diPath != null && file_exists(self::$diPath)){
+            $containerBuilder->addDefinitions(self::$diPath);
+        }
+
+        $containerBuilder->useAnnotations(true);
+        $this->container = $containerBuilder->build();
     }
 }
